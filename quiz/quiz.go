@@ -8,6 +8,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"reflect"
+	"strings"
 )
 
 type problem struct {
@@ -20,6 +22,26 @@ type quiz struct {
     score       int
     problems    []problem
 }
+
+// custom errors
+type QuizError struct {
+   msg  string 
+}
+
+func (e QuizError) Error() string {
+    return e.msg
+}
+
+func (e QuizError) Is(target error) bool {
+    if e2, ok := target.(QuizError); ok {
+        return reflect.DeepEqual(e, e2)
+    }
+    return false
+}
+
+var (
+    ErrFormat    = QuizError{msg: "not enough values"}
+)
 
 func main() {
     // gracefully handle errors and exit
@@ -71,7 +93,14 @@ func parseProblems(r io.Reader) ([]problem, error) {
             }
             return problems, err
         }
-        problems = append(problems, problem{question: row[0], answer: row[1]})
+        if len(row) < 2 {
+            return nil, ErrFormat
+        }
+        p := problem{
+            question: strings.TrimSpace(row[0]),
+            answer: strings.TrimSpace(row[1]),
+        }
+        problems = append(problems, p)
     }
 }
 
