@@ -53,13 +53,33 @@ func YAMLHandler(yml io.Reader, fallback http.Handler) (http.HandlerFunc, error)
     return MapHandler(pathMap, fallback), nil
 }
 
-func parseYAML(yml io.Reader) ([]shortUrl, error) {
-    s := []shortUrl{}
-    err := yaml.NewDecoder(yml).Decode(&s)
+// JSONHandler will parse the provided JSON and then return
+// an http.HandlerFunc (which also implements the http.Handler)
+// that will attempt to map any paths to their corresponding
+// URL. If the path is not provided in the JSON, then the
+// fallback http.Handler will be called instead.
+//
+// JSON is expected to be in the format:
+//
+//      [
+//          {
+//              "path": "/some-path",
+//              "url": "https://www.some-url.com/demo
+//          }
+//      ]
+//
+// The only errors that can be returned all related to having
+// invalid JSON data.
+//
+// See MapHandler to create a similar http.HandlerFunc via
+// a mapping of paths to urls.
+func JSONHandler(jsn io.Reader, fallback http.Handler) (http.HandlerFunc, error) {
+    parsedJson, err := parseJSON(jsn)
     if err != nil {
-        return nil, err
+        return fallback.ServeHTTP, nil
     }
-    return s, nil
+    pathMap := buildMap(parsedJson)
+    return MapHandler(pathMap, fallback), nil
 }
 
 func buildMap(urls []shortUrl) map[string]string {
@@ -70,13 +90,13 @@ func buildMap(urls []shortUrl) map[string]string {
     return m
 }
 
-func JSONHandler(jsn io.Reader, fallback http.Handler) (http.HandlerFunc, error) {
-    parsedJson, err := parseJSON(jsn)
+func parseYAML(yml io.Reader) ([]shortUrl, error) {
+    s := []shortUrl{}
+    err := yaml.NewDecoder(yml).Decode(&s)
     if err != nil {
-        return fallback.ServeHTTP, nil
+        return nil, err
     }
-    pathMap := buildMap(parsedJson)
-    return MapHandler(pathMap, fallback), nil
+    return s, nil
 }
 
 func parseJSON(jsn io.Reader) ([]shortUrl, error) {
