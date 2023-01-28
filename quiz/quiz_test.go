@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"errors"
-	"testing"
+    "bytes"
+    "errors"
+    "testing"
 
-	"github.com/google/go-cmp/cmp"
+    "github.com/google/go-cmp/cmp"
 )
 
 func Test_ParseProblems(t *testing.T) {

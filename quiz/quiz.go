@@ -1,15 +1,15 @@
 package main
 
 import (
-	"bufio"
-	"encoding/csv"
-	"flag"
-	"fmt"
-	"io"
-	"log"
-	"os"
-	"reflect"
-	"strings"
+    "bufio"
+    "encoding/csv"
+    "flag"
+    "fmt"
+    "io"
+    "log"
+    "os"
+    "reflect"
+    "strings"
 )
 
 type problem struct {
@@ -25,7 +25,7 @@ type quiz struct {
 
 // custom errors
 type QuizError struct {
-   msg  string 
+    msg  string 
 }
 
 func (e QuizError) Error() string {
