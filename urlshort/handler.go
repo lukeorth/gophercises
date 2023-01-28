@@ -1,11 +1,11 @@
 package urlshort
 
 import (
-	"encoding/json"
-	"io"
-	"net/http"
+    "encoding/json"
+    "io"
+    "net/http"
 
-	"gopkg.in/yaml.v2"
+    "gopkg.in/yaml.v2"
 )
 
 type shortUrl struct {
