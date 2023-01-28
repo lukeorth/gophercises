@@ -1,6 +1,7 @@
 package urlshort
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 
@@ -67,4 +68,22 @@ func buildMap(urls []shortUrl) map[string]string {
         m[v.Path] = v.Url
     }
     return m
+}
+
+func JSONHandler(jsn io.Reader, fallback http.Handler) (http.HandlerFunc, error) {
+    parsedJson, err := parseJSON(jsn)
+    if err != nil {
+        return fallback.ServeHTTP, nil
+    }
+    pathMap := buildMap(parsedJson)
+    return MapHandler(pathMap, fallback), nil
+}
+
+func parseJSON(jsn io.Reader) ([]shortUrl, error) {
+    s := []shortUrl{}
+    err := json.NewDecoder(jsn).Decode(&s)
+    if err != nil {
+        return nil, err
+    }
+    return s, nil
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-    //json := flag.String("json", "", "a json file which maps urls to shortend paths")
+    json := flag.String("json", "", "a json file which maps urls to shortend paths")
     yaml := flag.String("yaml", "", "a yaml file which maps urls to shortend paths")
     flag.Parse()
 
@@ -21,9 +21,10 @@ func main() {
 	}
 	mapHandler := newMapHandler(pathsToUrls)
     yamlHandler := newYAMLHandler(*yaml, mapHandler)
+    jsonHandler := newJSONHandler(*json, yamlHandler)
 
 	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", yamlHandler)
+	http.ListenAndServe(":8080", jsonHandler)
 }
 
 func defaultMux() *http.ServeMux {
@@ -57,4 +58,22 @@ func newYAMLHandler(fname string, fallback http.HandlerFunc) http.HandlerFunc {
     }
 
     return yamlHandler
+}
+
+func newJSONHandler(fname string, fallback http.HandlerFunc) http.HandlerFunc {
+    if fname == "" {
+        return fallback.ServeHTTP
+    }
+    f, err := os.Open(fname)
+    if err != nil {
+        panic(err)
+    }
+    defer f.Close()
+
+    jsonHandler, err := urlshort.JSONHandler(f, fallback)
+    if err != nil {
+        panic(err)
+    }
+
+    return jsonHandler
 }
