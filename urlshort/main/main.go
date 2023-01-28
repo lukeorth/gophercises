@@ -1,12 +1,12 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"net/http"
-	"os"
+    "flag"
+    "fmt"
+    "net/http"
+    "os"
 
-	"github.com/lukeorth/gophercises/urlshort"
+    "github.com/lukeorth/gophercises/urlshort"
 )
 
 func main() {
@@ -28,13 +28,13 @@ func main() {
 }
 
 func defaultMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", hello)
-	return mux
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", hello)
+    return mux
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
+    fmt.Fprintln(w, "Hello, world!")
 }
 
 func newMapHandler(paths map[string]string) http.HandlerFunc {
