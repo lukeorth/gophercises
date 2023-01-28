@@ -14,17 +14,17 @@ func main() {
     yaml := flag.String("yaml", "", "a yaml file which maps urls to shortend paths")
     flag.Parse()
 
-	// Build the MapHandler using the mux as the fallback
-	pathsToUrls := map[string]string{
-		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
-		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
-	}
-	mapHandler := newMapHandler(pathsToUrls)
+    // Build the MapHandler using the mux as the fallback
+    pathsToUrls := map[string]string{
+	    "/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
+	    "/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
+    }
+    mapHandler := newMapHandler(pathsToUrls)
     yamlHandler := newYAMLHandler(*yaml, mapHandler)
     jsonHandler := newJSONHandler(*json, yamlHandler)
 
-	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", jsonHandler)
+    fmt.Println("Starting the server on :8080")
+    http.ListenAndServe(":8080", jsonHandler)
 }
 
 func defaultMux() *http.ServeMux {
