@@ -3,6 +3,10 @@ package cyoa
 import (
 	"encoding/json"
 	"io"
+	"log"
+	"net/http"
+	"strings"
+	"text/template"
 )
 
 var defaultHandlerTmpl = `
@@ -19,11 +23,49 @@ var defaultHandlerTmpl = `
         {{end}}
         <ul>
         {{range .Options}}
-            <li><a href="/{{.Chapter}}">{{.Text}}</a></li>
+            <li><a href="/{{.Arc}}">{{.Text}}</a></li>
         {{end}}
         </ul>
     </body>
 </html>`
+
+type HandlerOption func(h *handler)
+
+func WithTemplate(t *template.Template) HandlerOption {
+    return func(h *handler) {
+        h.t = t
+    }
+}
+
+func NewHandler(s Story, opts ...HandlerOption) http.Handler {
+    h := handler{s, template.Must(template.New("").Parse(defaultHandlerTmpl))}
+    for _, opt := range opts {
+        opt(&h)
+    }
+    return h
+}
+
+type handler struct {
+    s Story
+    t *template.Template
+}
+
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    path := strings.TrimSpace(r.URL.Path)
+    if path == "" || path == "/" {
+        path = "/intro"
+    }
+    path = path[1:]
+    if chapter, ok := h.s[path]; ok {
+        err := h.t.Execute(w, chapter)
+        if err != nil {
+            log.Printf("%v", err)
+            http.Error(w, "Something went wrong...", http.StatusInternalServerError)
+        }
+        return
+    }
+    http.Error(w, "Chapter not found.", http.StatusNotFound)
+}
 
 func JsonStory(r io.Reader) (Story, error) {
     d := json.NewDecoder(r)
