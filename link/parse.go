@@ -65,9 +65,9 @@ func text(n *html.Node) string {
     }
     var ret string
     for c := n.FirstChild; c != nil; c = c.NextSibling {
-        ret += strings.TrimSpace(text(c) + " ")
+        ret += text(c)
     }
-    return ret
+    return strings.Join(strings.Fields(ret), " ")
 }
 
 func linkNodes(n *html.Node) []*html.Node {

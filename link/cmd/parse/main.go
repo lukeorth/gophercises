@@ -22,13 +22,14 @@ func main() {
     fname := flag.String("file", "", "name of HTML file to parse")
     flag.Parse()
 
-    // business logic
+    // open file
     f, err := os.Open(*fname)
     if err != nil {
         return
     }
     defer f.Close()
 
+    // business logic
     links, err := link.Parse(f)
     if err != nil {
         return
