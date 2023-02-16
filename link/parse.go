@@ -21,21 +21,6 @@ func Parse(r io.Reader) ([]Link, error) {
     if err != nil {
         return nil, err
     }
-    /*
-    var f func(*html.Node)
-    f = func(n *html.Node) {
-        if n.Type == html.ElementNode && n.Data == "a" {
-            href := n.Attr[0].Val
-            text := strings.TrimSpace(n.FirstChild.Data)
-
-            links = append(links, Link{href, text})
-        }
-        for c := n.FirstChild; c != nil; c = c.NextSibling {
-            f(c)
-        }
-    }
-    f(doc)
-    */
     nodes := linkNodes(doc)
     var links []Link
     for _, node := range nodes {
