@@ -2,11 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"net/http"
 
-	"github.com/lukeorth/gophercises/link"
+    "github.com/lukeorth/gophercises/sitemap"
 )
 
 func main() {
@@ -22,20 +20,7 @@ func main() {
     url := flag.String("url", "", "url of the website to map")
     flag.Parse()
 
-    // make request to website
-    res, err := http.Get(*url)
-    if err != nil {
-        return
-    }
-    if res.StatusCode > 299 {
-        log.Printf("Response failed with status code: %d\n", res.StatusCode)
-        return
-    }
-
     // parse links
-    links, err := link.Parse(res.Body)
-    if err != nil {
-        return
-    }
-    fmt.Printf("%+v\n", links)
+    links := sitemap.Build(*url)
+    _ = links
 }
