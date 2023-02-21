@@ -18,12 +18,12 @@ func main() {
 
     for _, ch := range input {
         if unicode.IsUpper(ch) {
-            rot := 65 + (int(ch) - 65 + k) % 26
+            rot := 'A' + (int(ch) - 'A' + k) % 26
             cipher += string(rot)
             continue
         }
         if unicode.IsLower(ch) {
-            rot := 97 + (int(ch) - 97 + k) % 26
+            rot := 'a' + (int(ch) - 'a' + k) % 26
             cipher += string(rot)
             continue
         }
